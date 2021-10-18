@@ -1,0 +1,179 @@
+import modules
+load sprites
+load misc pictures    #loads in pictures such as game name and instructions etc
+load music
+load sound effects
+load background
+
+#Subroutines
+define home_screen()
+	gamedisplay = background
+	home_screen = True
+
+	while home_screen == True 
+		game.mixer(game_music.wav) 
+
+		button(Play,gameloop())    #buttons are in this format: button( text on button here , Subroutine executed when pressed here )
+		button(Instructions,instructions_screen()) #X and Y of the button has been omitted
+		button(Settings,settings_screen())
+		button(Quit,quit())
+
+		display.image(game_name.img)   #displays game name. X and Y of the image has been omitted
+	end while	
+end function
+
+define instructions_screen()
+	gamedisplay = background
+	instructions_screen = True
+
+	while instructions_screen == True 
+		game.mixer(game_music.wav) 
+
+		button(Play,gameloop())    
+		button(Back,homescreen())
+		button(Quit,quit())
+
+		display.image(instructions.img)
+	end while
+end function
+
+define settings_screen()
+	gamedisplay = background
+	settings_screen = True
+
+	while settings_screen == True 
+		game.mixer(game_music.wav)
+
+		display.image(car1.img)
+		button(Select,Car1())
+
+		display.image(car2.img)
+		button(Select,Car2())
+
+		display.image(car3.img)
+		button(Select,Car3())
+
+		display.image(car4.img)
+		button(Select,Car4())
+
+		display.image(car5.img)
+		button(Select,Car5())
+
+		display.image(car6.img)
+		button(Select Random Car,Car6())
+
+		button(Back,homescreen())
+		button(Quit,quit())
+	end while
+end function
+
+define Car1()
+	CarSprite = car1.img
+	homescreen()   #When the player clicks the car the car will become selected and they will return to the home screen
+end function
+
+define Car2()
+	CarSprite = car2.img
+	homescreen()
+end function	
+
+define Car3()
+	CarSprite = car3.img
+	homescreen()
+end function
+
+define Car4()
+	CarSprite = car4.img
+	homescreen()
+end function
+
+define Car5()
+	CarSprite = car5.img
+	homescreen()
+end function
+
+define Car6()
+	1 = car1.img
+	2 = car2.img
+	3 = car2.img
+	4 = car2.img
+	5 = car2.img
+
+	CarSprite = (random integerbetween(1,5))
+	homescreen()
+end function
+
+define pause_screen()
+	gamedisplay = background
+	pause_screen = True
+
+	while pause_screen() == True 
+		game.mixer(game_music.wav)
+
+		button(Continue,gameloop())
+		button(Back,homescreen())
+		button(Quit,quit())
+	end while
+end function
+
+define death_screen()
+	gamedisplay = background
+	death_screen = True
+	while death_screen == True 
+		game.mixer(game_music.wav)
+
+		button(Play Again,gameloop())
+		button(Main Menu,homescreen())
+		button(Quit,quit())
+	end while
+end function
+
+define gameloop()
+	gameloop = True
+	gamedisplay = background
+	speed = 10
+	score = 0
+	dodged = 0
+	
+	display.image(CarSprite)
+	while gameloop == True 
+		game.mixer(game_music.wav)
+		
+		if right key is pressed down
+			CarSprite.X = CarSprite.X + 5   # moves X location of sprite 5 pixels to the right
+		end if
+		
+		if left key is pressed down
+			CarSprite.X = CarSprite.X - 5   #moves X location of sprite 5 pixels to the left
+		end if
+		
+		if p or P is pressed down 
+			pause_screen()
+		end if		
+
+		TruckSprite = display.image(truck.img)
+		
+		if dodged == True
+			TruckSprite.X = Random integer between(0,1000)   #will spawn the truck randomly between 0 and 1000 pixels
+			dodged = False
+		end if
+
+		TruckSprite.Y = TruckSprite.Y - speed #causes truck to move downwards
+		
+		if TruckSprite.Y = 0 
+			score = score + 1
+			speed = speed + 2
+			dodged = True
+		end if
+		
+		if CarSprite.X = TruckSprite.X or CarSprite.Y = TruckSprite.X or CarSprite.X = TruckSprite.Y or CarSprite.Y = TruckSprite.Y
+			game.sound(sound_effect.wav)
+			display.image(you_died.img)
+			gameloop = False
+			death_screen()
+		end if
+	end while
+end function
+
+#Main program
+homescreen()
